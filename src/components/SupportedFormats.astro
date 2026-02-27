@@ -1,0 +1,56 @@
+---
+import { CONVERSION_GROUPS } from '../lib/formats';
+import sharp from 'sharp';
+
+// Verify server-side capabilities
+const sharpVersion = sharp.versions?.vips ?? 'available';
+const nodeVersion = process.version;
+---
+
+<section
+  style="background-color: #18181f; border: 1px solid #2e2e3d; border-radius: 12px; padding: 24px;"
+>
+  <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 16px;">
+    <span style="font-size: 18px;">⚡</span>
+    <h2 style="margin: 0; font-size: 15px; font-weight: 600; color: #e8e8f0;">
+      Supported Conversions
+    </h2>
+    <span
+      style="margin-left: auto; font-size: 11px; color: #8888a4; background: #22222d; border-radius: 6px; padding: 2px 8px;"
+    >
+      Server-rendered · Node {nodeVersion}
+    </span>
+  </div>
+
+  <div style="display: flex; flex-direction: column; gap: 16px;">
+    {
+      CONVERSION_GROUPS.map((group) => (
+        <div>
+          <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 10px;">
+            <span style="font-size: 16px;">{group.icon}</span>
+            <span style="font-size: 13px; font-weight: 600; color: #e8e8f0;">
+              {group.category}
+            </span>
+            <span style="font-size: 11px; color: #8888a4;">— {group.description}</span>
+          </div>
+          <div style="display: flex; flex-wrap: wrap; gap: 8px; padding-left: 24px;">
+            {group.formats.map((pair) => (
+              <div
+                style="display: flex; align-items: center; gap: 6px; background: #22222d; border-radius: 8px; padding: 6px 10px; font-size: 12px;"
+              >
+                <span style="color: #8888a4;">{pair.from.join(' / ')}</span>
+                <span style="color: #7c6af7;">→</span>
+                <span style="color: #e8e8f0;">{pair.to.join(', ')}</span>
+              </div>
+            ))}
+          </div>
+        </div>
+      ))
+    }
+  </div>
+
+  <p style="margin: 16px 0 0; font-size: 11px; color: #8888a4; border-top: 1px solid #2e2e3d; padding-top: 12px;">
+    🔒 All conversions happen on the server — your files are never stored or shared.
+    Sharp {sharpVersion} is running server-side.
+  </p>
+</section>

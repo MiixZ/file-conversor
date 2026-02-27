@@ -1,0 +1,66 @@
+---
+import Layout from '../layouts/Layout.astro';
+import FileConverter from '../components/FileConverter';
+import SupportedFormats from '../components/SupportedFormats.astro';
+---
+
+<Layout
+  title="File Conversor — Convert Images, Archives & Documents"
+  description="Free, private, server-side file conversion. Convert images (JPG, PNG, WebP, AVIF), archives (ZIP, TAR.GZ), and documents (DOCX to PDF) instantly."
+>
+  <div
+    style="max-width: 900px; margin: 0 auto; padding: 32px 20px 80px;"
+  >
+    <!-- Header -->
+    <header style="text-align: center; margin-bottom: 48px;">
+      <div style="font-size: 56px; margin-bottom: 12px;">🔄</div>
+      <h1
+        style="margin: 0 0 10px; font-size: clamp(28px, 5vw, 42px); font-weight: 700; color: #e8e8f0;"
+      >
+        File Conversor
+      </h1>
+      <p style="margin: 0; font-size: 16px; color: #8888a4; max-width: 520px; margin: 0 auto;">
+        Convert images, archives, and documents — <strong style="color: #7c6af7;">free</strong>,
+        fast, and <strong style="color: #7c6af7;">private</strong>. Your files never leave the
+        server.
+      </p>
+    </header>
+
+    <!-- Main converter (client React island) -->
+    <main
+      style="background-color: #18181f; border: 1px solid #2e2e3d; border-radius: 16px; padding: 28px; margin-bottom: 28px;"
+    >
+      <FileConverter client:load />
+    </main>
+
+    <!-- Supported formats (Astro Server Island — loads after main page) -->
+    <SupportedFormats server:defer>
+      <!-- Fallback while the server island loads -->
+      <div
+        slot="fallback"
+        style="background-color: #18181f; border: 1px solid #2e2e3d; border-radius: 12px; padding: 24px; text-align: center; color: #8888a4; font-size: 13px;"
+      >
+        ⏳ Loading supported formats…
+      </div>
+    </SupportedFormats>
+
+    <!-- Footer -->
+    <footer
+      style="text-align: center; margin-top: 48px; font-size: 12px; color: #8888a4;"
+    >
+      <p style="margin: 0;">
+        Built with <a
+          href="https://astro.build"
+          target="_blank"
+          rel="noopener noreferrer"
+          style="color: #7c6af7; text-decoration: none;">Astro 5</a
+        > · <a
+          href="https://react.dev"
+          target="_blank"
+          rel="noopener noreferrer"
+          style="color: #7c6af7; text-decoration: none;">React 19</a
+        > · Server Islands · TypeScript
+      </p>
+    </footer>
+  </div>
+</Layout>
