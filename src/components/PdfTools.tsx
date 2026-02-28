@@ -28,10 +28,12 @@ export default function PdfTools() {
   const [isDragging, setIsDragging] = useState(false);
   const inputRef = useRef<HTMLInputElement>(null);
 
-  function setFile(file: File | null) {
-    if (state.downloadUrl) URL.revokeObjectURL(state.downloadUrl);
-    setState({ ...INITIAL_STATE, file });
-  }
+  const setFile = useCallback((file: File | null) => {
+    setState((prev) => {
+      if (prev.downloadUrl) URL.revokeObjectURL(prev.downloadUrl);
+      return { ...INITIAL_STATE, file };
+    });
+  }, []);
 
   const onDrop = useCallback((e: DragEvent<HTMLDivElement>) => {
     e.preventDefault();
@@ -40,7 +42,7 @@ export default function PdfTools() {
     if (file && file.name.toLowerCase().endsWith('.pdf')) {
       setFile(file);
     }
-  }, []);
+  }, [setFile]);
 
   const onDragOver = useCallback((e: DragEvent<HTMLDivElement>) => {
     e.preventDefault();
@@ -58,7 +60,7 @@ export default function PdfTools() {
       setFile(file);
       e.target.value = '';
     }
-  }, []);
+  }, [setFile]);
 
   function humanSize(bytes: number): string {
     if (bytes < 1024) return `${bytes} B`;
