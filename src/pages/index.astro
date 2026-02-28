@@ -1,6 +1,7 @@
 ---
 import Layout from '../layouts/Layout.astro';
 import FileConverter from '../components/FileConverter';
+import PdfTools from '../components/PdfTools';
 import SupportedFormats from '../components/SupportedFormats.astro';
 ---
 
@@ -32,6 +33,13 @@ import SupportedFormats from '../components/SupportedFormats.astro';
     >
       <FileConverter client:load />
     </main>
+
+    <!-- PDF Tools (client React island) -->
+    <section
+      style="background-color: #18181f; border: 1px solid #2e2e3d; border-radius: 16px; padding: 28px; margin-bottom: 28px;"
+    >
+      <PdfTools client:load />
+    </section>
 
     <!-- Supported formats (Astro Server Island — loads after main page) -->
     <SupportedFormats server:defer>
