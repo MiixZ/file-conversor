@@ -39,6 +39,14 @@ export const CONVERSION_GROUPS: ConversionGroup[] = [
     description: 'Document format conversion',
     formats: [{ from: ['DOCX'], to: ['PDF'] }],
   },
+  {
+    category: 'PDF Tools',
+    icon: '🔒',
+    description: 'Add or remove password protection on PDF files',
+    formats: [
+      { from: ['PDF'], to: ['🔓 Remove Password', '🔐 Add Password'] },
+    ],
+  },
 ];
 
 /** Map from source extension to list of available target formats */
