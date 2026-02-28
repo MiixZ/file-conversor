@@ -1,0 +1,16 @@
+name: file-conversor
+
+services:
+  file-conversor:
+    build: .
+    container_name: file-conversor
+    restart: unless-stopped
+    environment:
+      HOST: 0.0.0.0
+      PORT: 4321
+    networks:
+      - jNetwork
+
+networks:
+  jNetwork:
+    external: true
