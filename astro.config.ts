@@ -4,7 +4,6 @@ import node from "@astrojs/node";
 import tailwindcss from "@tailwindcss/vite";
 
 export default defineConfig({
-  base: "/conversor",
   output: "server",
   adapter: node({
     mode: "standalone",
