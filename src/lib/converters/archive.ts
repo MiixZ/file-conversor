@@ -1,61 +1,46 @@
-import archiver from 'archiver';
-import JSZip from 'jszip';
-import { Writable, Readable } from 'node:stream';
-import { writeFile, readFile, rm, mkdir } from 'node:fs/promises';
-import { tmpdir } from 'node:os';
-import { join } from 'node:path';
-import { randomUUID } from 'node:crypto';
-import * as tar from 'tar';
-
-function archiverToBuffer(
-  setup: (archive: archiver.Archiver) => void,
-  format: 'zip' | 'tar',
-  options?: archiver.ArchiverOptions,
-): Promise<Buffer> {
-  return new Promise((resolve, reject) => {
-    const archive = archiver(format, options);
-    const chunks: Buffer[] = [];
-    const output = new Writable({
-      write(chunk, _enc, cb) {
-        chunks.push(chunk);
-        cb();
-      },
-    });
-    output.on('finish', () => resolve(Buffer.concat(chunks)));
-    archive.on('error', reject);
-    archive.pipe(output);
-    setup(archive);
-    archive.finalize();
-  });
-}
+import JSZip from "jszip";
+import { writeFile, readFile, rm, mkdir } from "node:fs/promises";
+import { tmpdir } from "node:os";
+import { join, dirname } from "node:path";
+import { randomUUID } from "node:crypto";
+import * as tar from "tar";
 
 export async function zipToTarGz(zipBuffer: Buffer): Promise<Buffer> {
   const zip = await JSZip.loadAsync(zipBuffer);
-  const files: Array<{ name: string; data: Buffer }> = [];
+  const workDir = join(tmpdir(), `file-conversor-${randomUUID()}`);
+  await mkdir(workDir, { recursive: true });
 
-  for (const [name, entry] of Object.entries(zip.files)) {
-    if (!entry.dir) {
-      const data = await entry.async('nodebuffer');
-      files.push({ name, data });
-    }
-  }
+  try {
+    const fileNames: string[] = [];
 
-  return archiverToBuffer(
-    (archive) => {
-      for (const f of files) {
-        archive.append(Readable.from(f.data), { name: f.name });
+    for (const [name, entry] of Object.entries(zip.files)) {
+      if (!entry.dir) {
+        const data = await entry.async("nodebuffer");
+        const filePath = join(workDir, name);
+        await mkdir(dirname(filePath), { recursive: true });
+        await writeFile(filePath, data);
+        fileNames.push(name);
       }
-    },
-    'tar',
-    { gzip: true },
-  );
+    }
+
+    const outputPath = join(tmpdir(), `file-conversor-${randomUUID()}.tar.gz`);
+    await tar.create({ gzip: true, cwd: workDir, file: outputPath }, fileNames);
+
+    try {
+      return await readFile(outputPath);
+    } finally {
+      await rm(outputPath, { force: true });
+    }
+  } finally {
+    await rm(workDir, { recursive: true, force: true });
+  }
 }
 
 export async function tarGzToZip(tarGzBuffer: Buffer): Promise<Buffer> {
   const workDir = join(tmpdir(), `file-conversor-${randomUUID()}`);
   await mkdir(workDir, { recursive: true });
 
-  const tarGzPath = join(workDir, 'input.tar.gz');
+  const tarGzPath = join(workDir, "input.tar.gz");
   await writeFile(tarGzPath, tarGzBuffer);
 
   try {
@@ -64,10 +49,10 @@ export async function tarGzToZip(tarGzBuffer: Buffer): Promise<Buffer> {
     const zip = new JSZip();
 
     async function addDirToZip(dir: string, prefix: string): Promise<void> {
-      const { readdir, stat } = await import('node:fs/promises');
+      const { readdir, stat } = await import("node:fs/promises");
       const entries = await readdir(dir);
       for (const entry of entries) {
-        if (entry === 'input.tar.gz') continue;
+        if (entry === "input.tar.gz") continue;
         const fullPath = join(dir, entry);
         const info = await stat(fullPath);
         if (info.isDirectory()) {
@@ -79,9 +64,9 @@ export async function tarGzToZip(tarGzBuffer: Buffer): Promise<Buffer> {
       }
     }
 
-    await addDirToZip(workDir, '');
+    await addDirToZip(workDir, "");
 
-    return zip.generateAsync({ type: 'nodebuffer', compression: 'DEFLATE' });
+    return zip.generateAsync({ type: "nodebuffer", compression: "DEFLATE" });
   } finally {
     await rm(workDir, { recursive: true, force: true });
   }
