@@ -1,5 +1,7 @@
 # 🔄 File Conversor
 
+> 🤖 **Vibe Coding Project** — This project was fully built using AI-assisted development as part of my journey learning to build AI-powered projects.
+
 A **livian** file conversion web application built with [Astro 5](https://astro.build), [React 19](https://react.dev), and TypeScript. Convert images, archives, and documents — for **free**, directly in your browser with **server-side** processing.
 
 ## ✨ Features
