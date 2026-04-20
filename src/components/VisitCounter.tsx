@@ -16,14 +16,26 @@ export default function VisitCounter() {
         display: 'inline-flex',
         alignItems: 'center',
         gap: '6px',
-        fontSize: '13px',
+        fontSize: '14px',
         color: '#8888a4',
-        marginTop: '12px',
+        marginTop: '16px',
+        padding: '6px 14px',
+        background: '#18181f',
+        border: '1px solid #2e2e3d',
+        borderRadius: '999px',
       }}
     >
       <span style={{ fontSize: '15px' }}>👁️</span>
       <span>
-        {count === null ? '…' : `${count.toLocaleString()} ${count === 1 ? 'visit' : 'visits'}`}
+        {count === null ? '…' : (
+          <>
+            <span style={{ color: '#7c6af7', fontWeight: 600 }}>
+              {count.toLocaleString()}
+            </span>
+            {' '}
+            {count === 1 ? 'visit' : 'visits'}
+          </>
+        )}
       </span>
     </div>
   );
