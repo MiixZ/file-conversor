@@ -3,6 +3,7 @@ import Layout from '../layouts/Layout.astro';
 import FileConverter from '../components/FileConverter';
 import PdfTools from '../components/PdfTools';
 import SupportedFormats from '../components/SupportedFormats.astro';
+import VisitCounter from '../components/VisitCounter';
 ---
 
 <Layout
@@ -25,6 +26,7 @@ import SupportedFormats from '../components/SupportedFormats.astro';
         fast, and <strong style="color: #7c6af7;">private</strong>. Your files never leave the
         server.
       </p>
+      <VisitCounter client:load />
     </header>
 
     <!-- Main converter (client React island) -->
